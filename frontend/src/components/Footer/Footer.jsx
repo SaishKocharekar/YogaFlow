@@ -27,7 +27,7 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative pt-20 pb-8 border-t border-white/5">
+    <footer className="relative pt-20 pb-8 border-t border-white/5 overflow-hidden">
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-px bg-gradient-to-r from-transparent via-purple-500/50 to-transparent" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -69,7 +69,7 @@ const Progress = () => {
       </motion.div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+      <div className="grid grid-cols-1 min-[400px]:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         {[
           { label: 'Yoga Sessions', value: yogaSessions, sub: 'This week', icon: <FaDumbbell />, color: 'from-purple-500 to-pink-500' },
           { label: 'Meditation Time', value: `${meditationMins} min`, sub: 'This week', icon: <FaBrain />, color: 'from-blue-500 to-cyan-500' },
@@ -98,21 +98,23 @@ const Progress = () => {
           {bmiHistory.length === 0 ? (
             <div className="text-center py-8 text-gray-500 text-sm">No BMI records yet. Calculate your BMI to start tracking!</div>
           ) : (
-            <div className="flex items-end gap-3" style={{ height: '140px' }}>
-              {bmiHistory.map((record, i) => {
-                const minBmi = Math.min(...bmiHistory.map(r => r.bmi)) - 2;
-                const maxBmi = Math.max(...bmiHistory.map(r => r.bmi)) + 2;
-                const pct = ((record.bmi - minBmi) / (maxBmi - minBmi));
-                const barH = Math.max(pct * 100, 12);
-                return (
-                  <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
-                    <span className="text-xs text-gray-400 font-medium mb-1">{record.bmi?.toFixed(1)}</span>
-                    <div className="w-full rounded-t-lg bg-gradient-to-t from-green-500 to-teal-400 transition-all"
-                      style={{ height: `${barH}px` }} />
-                    <span className="text-[10px] text-gray-500 mt-2">{new Date(record.createdAt).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</span>
-                  </div>
-                );
-              })}
+            <div className="overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+              <div className="flex items-end gap-3 min-w-[320px] sm:min-w-0" style={{ height: '140px' }}>
+                {bmiHistory.map((record, i) => {
+                  const minBmi = Math.min(...bmiHistory.map(r => r.bmi)) - 2;
+                  const maxBmi = Math.max(...bmiHistory.map(r => r.bmi)) + 2;
+                  const pct = ((record.bmi - minBmi) / (maxBmi - minBmi));
+                  const barH = Math.max(pct * 100, 12);
+                  return (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
+                      <span className="text-xs text-gray-400 font-medium mb-1">{record.bmi?.toFixed(1)}</span>
+                      <div className="w-full rounded-t-lg bg-gradient-to-t from-green-500 to-teal-400 transition-all"
+                        style={{ height: `${barH}px` }} />
+                      <span className="text-[10px] text-gray-500 mt-2">{new Date(record.createdAt).toLocaleDateString('en', { month: 'short', day: 'numeric' })}</span>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           )}
         </motion.div>
@@ -122,22 +124,24 @@ const Progress = () => {
           className="glass-light rounded-2xl p-6 border border-white/5">
           <h3 className="text-white font-semibold mb-1">Weekly Yoga Activity</h3>
           <p className="text-gray-500 text-xs mb-5">Number of yoga sessions per day</p>
-          <div className="flex items-end gap-2" style={{ height: '140px' }}>
-            {(weeklyActivity || []).map((day, i) => {
-              const hasActivity = day.yoga > 0;
-              const barH = hasActivity ? Math.max((day.yoga / maxYoga) * 100, 20) : 20;
-              return (
-                <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
-                  <span className={`text-xs font-medium mb-1 ${hasActivity ? 'text-purple-400' : 'text-gray-600'}`}>{day.yoga}</span>
-                  <div className="w-full rounded-t-lg transition-all"
-                    style={{
-                      height: `${barH}px`,
-                      background: hasActivity ? 'linear-gradient(to top, #7c3aed, #a855f7)' : 'rgba(255,255,255,0.08)'
-                    }} />
-                  <span className="text-[10px] text-gray-500 mt-2">{day.day}</span>
-                </div>
-              );
-            })}
+          <div className="overflow-x-auto pb-2 scrollbar-hide" style={{ scrollbarWidth: 'none' }}>
+            <div className="flex items-end gap-2 min-w-[320px] sm:min-w-0" style={{ height: '140px' }}>
+              {(weeklyActivity || []).map((day, i) => {
+                const hasActivity = day.yoga > 0;
+                const barH = hasActivity ? Math.max((day.yoga / maxYoga) * 100, 20) : 20;
+                return (
+                  <div key={i} className="flex-1 flex flex-col items-center justify-end h-full">
+                    <span className={`text-xs font-medium mb-1 ${hasActivity ? 'text-purple-400' : 'text-gray-600'}`}>{day.yoga}</span>
+                    <div className="w-full rounded-t-lg transition-all"
+                      style={{
+                        height: `${barH}px`,
+                        background: hasActivity ? 'linear-gradient(to top, #7c3aed, #a855f7)' : 'rgba(255,255,255,0.08)'
+                      }} />
+                    <span className="text-[10px] text-gray-500 mt-2">{day.day}</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
           {weeklyActivity && weeklyActivity.every(d => d.yoga === 0) && (
             <p className="text-center text-gray-600 text-xs mt-4">No yoga sessions this week. Log an activity to start tracking! 🧘</p>
@@ -152,24 +156,28 @@ const Progress = () => {
           <h3 className="text-white font-semibold mb-4">Recent Activity</h3>
           <div className="space-y-3">
             {progress.recentLogs.slice(0, 5).map((log, i) => (
-              <div key={i} className="flex items-center gap-4 py-2 border-b border-white/5 last:border-0">
-                <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm ${
-                  log.type === 'yoga' ? 'bg-purple-500/10 text-purple-400' :
-                  log.type === 'meditation' ? 'bg-blue-500/10 text-blue-400' : 'bg-amber-500/10 text-amber-400'
-                }`}>
-                  {log.type === 'yoga' ? '🧘' : log.type === 'meditation' ? '🧠' : '🍎'}
+              <div key={i} className="flex flex-wrap sm:flex-nowrap items-center justify-between sm:justify-start gap-3 py-3 border-b border-white/5 last:border-0">
+                <div className="flex items-center gap-4 flex-1 min-w-[200px]">
+                  <div className={`w-9 h-9 rounded-xl flex items-center justify-center text-sm flex-shrink-0 ${
+                    log.type === 'yoga' ? 'bg-purple-500/10 text-purple-400' :
+                    log.type === 'meditation' ? 'bg-blue-500/10 text-blue-400' : 'bg-amber-500/10 text-amber-400'
+                  }`}>
+                    {log.type === 'yoga' ? '🧘' : log.type === 'meditation' ? '🧠' : '🍎'}
+                  </div>
+                  <div>
+                    <p className="text-white text-sm font-medium capitalize">{log.type} Session</p>
+                    <p className="text-gray-500 text-xs">{log.notes || `${log.duration} minutes`}</p>
+                  </div>
                 </div>
-                <div className="flex-1">
-                  <p className="text-white text-sm font-medium capitalize">{log.type} Session</p>
-                  <p className="text-gray-500 text-xs">{log.notes || `${log.duration} minutes`}</p>
-                </div>
-                <div className="flex items-center gap-2 text-gray-500 text-xs">
-                  <HiClock size={12} />
-                  <span>{log.duration}m</span>
-                </div>
-                <div className="flex items-center gap-2 text-gray-500 text-xs">
-                  <HiCalendar size={12} />
-                  <span>{new Date(log.createdAt).toLocaleDateString()}</span>
+                <div className="flex items-center gap-4 text-gray-500 text-xs">
+                  <div className="flex items-center gap-1.5">
+                    <HiClock size={12} />
+                    <span>{log.duration}m</span>
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <HiCalendar size={12} />
+                    <span>{new Date(log.createdAt).toLocaleDateString()}</span>
+                  </div>
                 </div>
               </div>
             ))}

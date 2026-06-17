@@ -109,7 +109,7 @@ const BMICalculator = () => {
 
           <div className="mt-6 pt-6 border-t border-white/5">
             <p className="text-xs text-gray-500 mb-3 font-medium">BMI Categories</p>
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {[
                 { label: 'Underweight', range: '< 18.5', color: 'bg-blue-500' },
                 { label: 'Normal', range: '18.5 – 24.9', color: 'bg-green-500' },

@@ -121,7 +121,7 @@ const AIPlan = () => {
             <div className="hidden sm:block w-px h-12 bg-white/5" />
 
             {/* Weight & Height */}
-            <div className="flex gap-6 text-sm">
+            <div className="flex flex-wrap gap-4 sm:gap-6 text-sm">
               <div>
                 <p className="text-[10px] uppercase tracking-widest text-gray-500 mb-0.5">Weight</p>
                 <p className="text-white font-semibold">{bmiRecord.weight} kg</p>
