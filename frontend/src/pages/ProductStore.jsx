@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { connectSocket } from '../services/socket';
-import { FaStar, FaShoppingCart, FaTrash, FaMinus, FaPlus } from 'react-icons/fa';
+import { FaStar, FaShoppingCart, FaTrash, FaMinus, FaPlus, FaCheckCircle } from 'react-icons/fa';
 import { HiX } from 'react-icons/hi';
 
 const ProductStore = () => {
