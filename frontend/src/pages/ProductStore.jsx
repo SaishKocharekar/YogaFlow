@@ -16,6 +16,8 @@ const ProductStore = () => {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [placing, setPlacing] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const [addedProduct, setAddedProduct] = useState(null);
+  const [showPopup, setShowPopup] = useState(false);
 
   useEffect(() => {
     loadProducts();
@@ -25,6 +27,15 @@ const ProductStore = () => {
     socket.on('product-updated', () => loadProducts());
     return () => { socket.off('product-added'); socket.off('product-deleted'); socket.off('product-updated'); };
   }, []);
+
+  useEffect(() => {
+    if (showPopup && addedProduct) {
+      const timer = setTimeout(() => {
+        setShowPopup(false);
+      }, 3500);
+      return () => clearTimeout(timer);
+    }
+  }, [showPopup, addedProduct]);
 
   const loadProducts = async () => {
     setLoading(true);
@@ -42,6 +53,8 @@ const ProductStore = () => {
       if (existing) return prev.map(item => item.id === product.id ? { ...item, quantity: item.quantity + 1 } : item);
       return [...prev, { ...product, quantity: 1 }];
     });
+    setAddedProduct(product);
+    setShowPopup(true);
   };
 
   const updateQuantity = (id, delta) => {
@@ -196,6 +209,64 @@ const ProductStore = () => {
               )}
             </motion.div>
           </>
+        )}
+      </AnimatePresence>
+
+      {/* Cart Addition Success Popup */}
+      <AnimatePresence>
+        {showPopup && addedProduct && (
+          <motion.div
+            initial={{ opacity: 0, y: 50, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ type: 'spring', damping: 20, stiffness: 260 }}
+            className="fixed bottom-4 left-4 right-4 sm:left-auto sm:bottom-6 sm:right-6 sm:w-[400px] bg-dark-900/95 backdrop-blur-lg border border-white/10 rounded-2xl shadow-2xl z-50 overflow-hidden"
+          >
+            <div className="p-5 space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-green-500/10 border border-green-500/20 text-green-400 flex items-center justify-center">
+                  <FaCheckCircle size={20} />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <h4 className="text-white font-bold text-sm">Added to Cart!</h4>
+                  <p className="text-xs text-gray-400 mt-0.5">Product added to cart successfully!</p>
+                </div>
+                <button onClick={() => setShowPopup(false)} className="text-gray-500 hover:text-white transition-colors">
+                  <HiX size={18} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/[0.02] border border-white/5">
+                {addedProduct.image ? (
+                  <img src={addedProduct.image} alt={addedProduct.name} className="w-12 h-12 rounded-lg object-cover" />
+                ) : (
+                  <div className="w-12 h-12 rounded-lg bg-dark-800 flex items-center justify-center text-xl">🧘</div>
+                )}
+                <div className="flex-1 min-w-0">
+                  <p className="text-white text-xs font-semibold truncate">{addedProduct.name}</p>
+                  <p className="text-amber-400 text-xs font-bold mt-0.5">₹{addedProduct.price}</p>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-3 pt-2">
+                <button
+                  onClick={() => setShowPopup(false)}
+                  className="w-full py-2.5 rounded-xl border border-white/10 text-xs font-semibold hover:bg-white/5 hover:text-white transition-all text-gray-400"
+                >
+                  Continue Shopping
+                </button>
+                <button
+                  onClick={() => {
+                    setCartOpen(true);
+                    setShowPopup(false);
+                  }}
+                  className="w-full py-2.5 rounded-xl bg-gradient-to-r from-purple-600 to-amber-500 hover:from-purple-500 hover:to-amber-400 text-white text-xs font-bold transition-all shadow-md"
+                >
+                  View Cart
+                </button>
+              </div>
+            </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </div>
