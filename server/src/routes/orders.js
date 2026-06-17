@@ -8,7 +8,7 @@ const router = Router();
 // Place order
 router.post('/', verifyToken, async (req, res) => {
   try {
-    const { productId, productName, quantity, price, total } = req.body;
+    const { productId, productName, quantity, price, total, paymentMethod, deliveryAddress } = req.body;
     const order = {
       userId: req.user.uid,
       userName: req.user.email,
@@ -16,6 +16,8 @@ router.post('/', verifyToken, async (req, res) => {
       quantity: Number(quantity),
       price: Number(price),
       total: Number(total),
+      paymentMethod: paymentMethod || 'Not Specified',
+      deliveryAddress: deliveryAddress || {},
       status: 'Pending',
       createdAt: Date.now()
     };

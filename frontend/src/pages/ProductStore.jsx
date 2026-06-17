@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { motion, AnimatePresence } from 'framer-motion';
 import { connectSocket } from '../services/socket';
@@ -7,6 +8,7 @@ import { HiX } from 'react-icons/hi';
 
 const ProductStore = () => {
   const { currentUser, getProducts, placeOrder } = useAuth();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [cart, setCart] = useState([]);
@@ -52,6 +54,12 @@ const ProductStore = () => {
   const removeFromCart = (id) => setCart(prev => prev.filter(item => item.id !== id));
   const totalAmount = cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+  const handleProceedToCheckout = () => {
+    if (cart.length === 0) return;
+    setCartOpen(false);
+    navigate('/checkout', { state: { items: cart } });
+  };
 
   const handlePlaceOrder = async () => {
     if (cart.length === 0) return;
@@ -126,8 +134,17 @@ const ProductStore = () => {
                 <p className="text-gray-400 text-xs mb-4 line-clamp-2">{product.description}</p>
                 <div className="flex items-center justify-between">
                   <span className="text-lg font-bold gradient-text-reverse">₹{product.price}</span>
-                  <button onClick={() => addToCart(product)}
-                    className="px-4 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-purple-600 to-amber-500 text-white hover:from-purple-500 hover:to-amber-400 transition-all">Add to Cart</button>
+                  <div className="flex items-center gap-2">
+                    <button onClick={() => addToCart(product)}
+                      className="p-2.5 rounded-xl bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 transition-all border border-purple-500/20"
+                      title="Add to Cart">
+                      <FaShoppingCart size={14} />
+                    </button>
+                    <button onClick={() => navigate('/checkout', { state: { items: [{ ...product, quantity: 1 }] } })}
+                      className="px-4 py-2 rounded-xl text-sm font-semibold bg-gradient-to-r from-purple-600 to-amber-500 text-white hover:from-purple-500 hover:to-amber-400 transition-all shadow-md">
+                      Buy Now
+                    </button>
+                  </div>
                 </div>
               </div>
             </motion.div>
@@ -171,9 +188,9 @@ const ProductStore = () => {
                     <span className="text-gray-400">Total</span>
                     <span className="text-xl font-bold gradient-text-reverse">₹{totalAmount.toLocaleString()}</span>
                   </div>
-                  <button onClick={handlePlaceOrder} disabled={placing}
-                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-amber-500 rounded-xl text-white font-semibold hover:from-purple-500 hover:to-amber-400 transition-all shadow-lg disabled:opacity-50">
-                    {placing ? 'Placing Order...' : 'Place Order'}
+                  <button onClick={handleProceedToCheckout}
+                    className="w-full py-3 bg-gradient-to-r from-purple-600 to-amber-500 rounded-xl text-white font-semibold hover:from-purple-500 hover:to-amber-400 transition-all shadow-lg">
+                    Proceed to Checkout
                   </button>
                 </div>
               )}

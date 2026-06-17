@@ -23,6 +23,8 @@ import AdminContent from './pages/AdminContent';
 import ProtectedRoute from './components/ProtectedRoute/ProtectedRoute';
 import AdminRoute from './components/AdminRoute/AdminRoute';
 import Chatbot from './components/Chatbot/Chatbot';
+import Checkout from './pages/Checkout';
+import OrderSuccess from './pages/OrderSuccess';
 
 // Wrapper to conditionally show chatbot (hide on admin pages)
 const ChatbotWrapper = () => {
@@ -63,6 +65,10 @@ function App() {
             <Route path="orders" element={<AdminOrders />} />
             <Route path="content" element={<AdminContent />} />
           </Route>
+
+          {/* Checkout & Success Flow */}
+          <Route path="/checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
+          <Route path="/order-success" element={<ProtectedRoute><OrderSuccess /></ProtectedRoute>} />
         </Routes>
 
         {/* AI Chatbot — hidden on admin pages */}
